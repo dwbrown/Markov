@@ -1,0 +1,8 @@
+Debug
+Backup
+Snapshots
+*~
+*.o
+markov
+markov.in
+
