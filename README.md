@@ -185,3 +185,10 @@ source line number, plus a unique id "uid" which is incremented
 each attempted transformation.  There is a constant BREAK_AT_UID
 in file "work.cpp" which, if nonzero, means to call a breakpoint 
 function after the specified attempted transformation.
+
+
+DEVELOPMENT LANGUAGE:
+
+The Markov program was developed using C++ for Microsoft Visual Studio
+version 10.  It was ported to Ubuntu and is compiled with 
+gcc version 4.7.2.
