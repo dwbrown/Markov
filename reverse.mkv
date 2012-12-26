@@ -1,0 +1,9 @@
+; reverse a string
+"*"      -> "a[*]"      ; starting transformation (matched once)
+"b[]*"   -> "*"         ; terminating transformation
+
+"a[*~*]" -> "a[*]"      ; throw away all but the first line
+"a[\ *]" -> "a[*]"      ; throw away leading blanks
+"a[*\ ]" -> "a[*]"      ; throw away trailing blanks
+"a[*]"   -> "b[*]"      ; change to state b
+"b[?$]*" -> "b[$]?*"    ; state b: reverse characters until done
