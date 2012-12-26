@@ -6,9 +6,8 @@ PltGames-TuringTarpit Repository for Markov string transformation language.
 
 Program MARKOV
 
-This program is a string rewriting system which uses string 
-transformations to convert an input string into an output string.  
-The input program is a series of transformations like:
+This program is a string rewriting system which uses string transformations to convert 
+an input string into an output string.  The input program is a series of transformations like:
 
     ; reverse a string
     "*"      -> "a[*]"    ; starting transformation (matched once)
@@ -20,16 +19,14 @@ The input program is a series of transformations like:
     "a[*]"   -> "b[*]"    ; change to state b
     "b[?$]*" -> "b[$]?*"  ; state b: reverse characters until done
 
-For each transformation, The string before the -> is the match string, 
-the string after the -> is the replacement string.  The match string 
-and the replacement string may use as delimiters single quotes like 
-"abc", double quotes like "abc", or vertical bars like |abc|.   
-The delimiter may not appear inside the string, and the pattern and 
-replacement strings may not contain end of lines (but may contain the 
-"~" character, which matches an end-of-line in the input string).
-Comments start with a ";" character an extend to the end of the line.  
-Any number of spaces, end of lines or comments may appear before or 
-after the match or replacement strings.
+For each transformation, The string before the -> is the match string, the string after 
+the -> is the replacement string.  The match string and the replacement string may use as 
+delimiters single quotes like "abc", double quotes like "abc", or vertical bars like |abc|.   
+The delimiter may not appear inside the string, and the pattern and replacement strings may 
+not contain end of lines (but may contain the "~" character, which matches an end-of-line in 
+the input string).  Comments start with a ";" character an extend to the end of the line.  
+Any number of spaces, end of lines or comments may appear before or after the match or 
+replacement strings.
 
 At each transformation step, the result of the previous transformation 
 (which is the input to the next transformation) is called the working 
