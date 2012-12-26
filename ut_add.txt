@@ -1,0 +1,20 @@
+; Unit Test file ut_add.txt
+; Tests Markov program file add.mkv
+; Test #1
+173, 45
+218
+; Test #2
+45, 173
+218
+; Test #3
+123, 456
+579
+; Test #4
+2, 9
+11
+; Test #4
+12, 99
+111
+; Test #4
+123456, 999999
+1123455
