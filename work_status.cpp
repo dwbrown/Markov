@@ -24,6 +24,7 @@ static const StrTabElement_t g_WorkStatusNames[] =
     { WS_ERROR_DOESNT_MATCH_EXPECTED,       "ERROR_DOESNT_MATCH_EXPECTED" },
     { WS_ERROR_REPLACE_STR_BAD_WILDCARD,    "ERROR_REPLACE_STR_BAD_WILDCARD" },
     { WS_ERROR_NO_MATCHING_XFORMS,          "ERROR_NO_MATCHING_XFORMS" },
+    { WS_ERROR_START_STEP_NO_MATCH,         "ERROR_START_STEP_NO_MATCH" },
     { WS_ERROR_STACK_EMPTY,                 "ERROR_STACK_EMPTY" },
     { -1,                                   0 }
 };

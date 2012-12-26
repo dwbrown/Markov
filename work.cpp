@@ -5,6 +5,7 @@
 //
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
+//      26-DEC-12   D.Brown     If start xform fails then error
 
 #include "work.h"
 #include "work_data.h"
@@ -149,6 +150,11 @@ WorkStatus_t Work::DoTransformations(
                 }
 
                 myWorkData.UnrefCurrentPattern();
+            }
+
+            if ( status == WS_NO_MATCH && myPC == START_STEP )
+            {
+                status = WS_ERROR_START_STEP_NO_MATCH;
             }
 
             if ( status == WS_NO_MATCH )

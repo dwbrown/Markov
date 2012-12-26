@@ -28,6 +28,7 @@ enum WorkStatus_t
     WS_ERROR_REPLACE_STR_BAD_WILDCARD,  // replacement string contains a wildcard not
                                         // defined in the corresponding pattern
     WS_ERROR_NO_MATCHING_XFORMS,        // no matching xforms found in program
+    WS_ERROR_START_STEP_NO_MATCH,       // start step must succeed
     WS_ERROR_STACK_EMPTY,               // stack is unexpectedly empty
 
     WS_END

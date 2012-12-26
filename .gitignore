@@ -1,8 +1,11 @@
 Debug
 Backup
 Snapshots
+Test
 *~
 *.o
 markov
 markov.in
+markov.log
+
 
