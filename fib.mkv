@@ -1,0 +1,112 @@
+; Program fib.mkv: prints a set of fibonacci numbers.
+; The input string is the number of fibonacci numbers to generate.
+; Blanks are ignored in the input string,
+; and all lines except the first are thrown away.
+; The output string will be one or more fibonacci numbers separated by blanks.
+; Example: input string "5" produces "5 3 2 1 1"
+
+"*" -> "a[*]"                             ; start
+"x[$\ ]" -> "$"                           ; end, report fib list, discard trailing blank
+
+"a[$~*]" -> "a[$]"                        ; throw away everything except first line
+"a[*\ *]" -> "a[**]"                      ; discard all blanks
+"a[\0]" -> "x[\ ]"                        ; special check for max count of 0
+"a[\1]" -> "x[\1\ ]"                      ; special check for max count of 1
+"a[$]" -> "fib[$,\2]<\1,\1>"              ; start fib with count=2
+                                          ; args are [maxcount,count]<this,prev>fiblist
+
+; *******************************
+; include function + from add.mkv
+; *******************************
+
+; ad: add two digits.  arguments are two digits with no separator
+"ad(\0?)" -> "?"
+"ad(?\0)" -> "?"
+
+"ad(\1\1)" -> "\2"
+"ad(\1\2)" -> "\3"
+"ad(\1\3)" -> "\4"
+"ad(\1\4)" -> "\5"
+"ad(\1\5)" -> "\6"
+"ad(\1\6)" -> "\7"
+"ad(\1\7)" -> "\8"
+"ad(\1\8)" -> "\9"
+"ad(\1\9)" -> "ac\0"
+"ad(?\1)"  -> "ad(\1?)"
+
+"ad(\2\2)" -> "\4"
+"ad(\2\3)" -> "\5"
+"ad(\2\4)" -> "\6"
+"ad(\2\5)" -> "\7"
+"ad(\2\6)" -> "\8"
+"ad(\2\7)" -> "\9"
+"ad(\2\8)" -> "ac\0"
+"ad(\2\9)" -> "ac\1"
+"ad(?\2)"  -> "ad(\2?)"
+
+"ad(\3\3)" -> "\6"
+"ad(\3\4)" -> "\7"
+"ad(\3\5)" -> "\8"
+"ad(\3\6)" -> "\9"
+"ad(\3\7)" -> "ac\0"
+"ad(\3\8)" -> "ac\1"
+"ad(\3\9)" -> "ac\2"
+"ad(?\3)"  -> "ad(\3?)"
+
+"ad(\4\4)" -> "\8"
+"ad(\4\5)" -> "\9"
+"ad(\4\6)" -> "ac\0"
+"ad(\4\7)" -> "ac\1"
+"ad(\4\8)" -> "ac\2"
+"ad(\4\9)" -> "ac\3"
+"ad(?\4)"  -> "ad(\4?)"
+
+"ad(\5\5)" -> "ac\0"
+"ad(\5\6)" -> "ac\1"
+"ad(\5\7)" -> "ac\2"
+"ad(\5\8)" -> "ac\3"
+"ad(\5\9)" -> "ac\4"
+"ad(?\5)"  -> "ad(\5?)"
+
+"ad(\6\6)" -> "ac\2"
+"ad(\6\7)" -> "ac\3"
+"ad(\6\8)" -> "ac\4"
+"ad(\6\9)" -> "ac\5"
+"ad(?\6)"  -> "ad(\6?)"
+
+"ad(\7\7)" -> "ac\4"
+"ad(\7\8)" -> "ac\5"
+"ad(\7\9)" -> "ac\6"
+"ad(?\7)"  -> "ad(\7?)"
+
+"ad(\8\8)" -> "ac\6"
+"ad(\8\9)" -> "ac\7"
+"ad(\9\8)" -> "ac\7"
+
+"ad(\9\9)" -> "ac\8"
+
+; ac : add carry
+"?ac" -> "ad(?\1)"
+
+; + : add two positive integers.  arguments are separated by a comma
+"+($?,%.)" -> "+($,%)ad(?.)"   ; move next digit to rear
+"+(,%.)"   -> "+(,%)."         ; no more digits for left operand
+"+($?,)"   -> "+($,)?"         ; no more digits for right operand
+"+(,)ac"   -> "\1"             ; no more digits to add carry into
+"+(,)"     -> ""               ; get rid of final add
+
+
+; *********************
+; new stuff for fib.mkv
+; *********************
+
+; fib: compute next fibonacci number and add it to the beginning of the list
+; args are: fib[max_count,count]<cur,prev>list_so_far
+
+"fib[$,$]<*,%>*" -> "x[*\ %\ *]"          ; maxcount=count, so finish up
+                                          ; (include latest this in list)
+
+"fib[%,$]*" -> "sub[%,+(\1,$)]*"          ; add 1 to count, call sub
+
+"sub[*]<$,%>" -> "fib[*]<+($,%),$>%\ "    ; next fib, prev=this, this=+(prev,this),
+                                          ; insert prev into fib list
