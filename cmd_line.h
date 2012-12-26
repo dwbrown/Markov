@@ -16,6 +16,7 @@
 //
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
+//      26-DEC-12   D.Brown     Added immediate command mode
 
 #ifndef CMD_LINE_H
 #define CMD_LINE_H
@@ -30,8 +31,8 @@
 
 enum CmdLineFlags_t
 {
-    CMDFLGS_SINGLE,     // -1 : single line mode
     CMDFLGS_TEST,       // -test or -t : unit test mode
+    CMDFLGS_IMMEDIATE,  // -imm or -i : input filename is input string
     CMDFLGS_DEBUG,      // -debug or -d : debug info to markov.log
     CMDFLGS_VERBOSE,    // -verbose or -v : verbose debug mode
     CMDFLGS_CONSOLE,    // -console -r -c : debug & verbose info to console
@@ -46,7 +47,7 @@ enum CmdLineFlags_t
 enum CmdMode_t
 {
     CMDMODE_FULL_FILE,          // read entire file then do transformation, output
-    CMDMODE_SINGLE_LINE,        // read line from stdin, transform, output, loop
+    CMDMODE_IMMEDIATE,          // input filename itself is the input string
     CMDMODE_UNIT_TEST,          // read line, transform, compare with next line, loop
 
     CMDMODE_END
@@ -56,8 +57,8 @@ enum CmdMode_t
 enum FileNameId_t
 {
     FNID_PROGRAM_FILE,          // contains Markov program
-    FNID_INPUT_FILE,            // input string
-    FNID_OUTPUT_FILE,           // output string
+    FNID_INPUT_FILE,            // input filename (or input string contents)
+    FNID_OUTPUT_FILE,           // output filename
 
     FNID_END
 };

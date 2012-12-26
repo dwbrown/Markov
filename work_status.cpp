@@ -5,6 +5,7 @@
 //
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
+//      26-DEC-12   D.Brown     Added WS_ERROR_CANT_CREATE_IMMEDIATE_FILE
 
 #include "work_status.h"
 #include "misc.h"
@@ -18,6 +19,7 @@ static const StrTabElement_t g_WorkStatusNames[] =
     { WS_END_OF_FILE,                       "END_OF_FILE" },
     { WS_ERROR_CANT_OPEN_DEBUG_FILE,        "ERROR_CANT_OPEN_DEBUG_FILE" },
     { WS_ERROR_CANT_OPEN_INPUT_FILE,        "ERROR_CANT_OPEN_INPUT_FILE" },
+    { WS_ERROR_CANT_CREATE_IMMEDIATE_FILE,  "ERROR_CANT_CREATE_IMMEDIATE_FILE" },
     { WS_ERROR_CANT_OPEN_OUTPUT_FILE,       "ERROR_CANT_OPEN_OUTPUT_FILE" },
     { WS_ERROR_DOESNT_MATCH_EXPECTED,       "ERROR_DOESNT_MATCH_EXPECTED" },
     { WS_ERROR_REPLACE_STR_BAD_WILDCARD,    "ERROR_REPLACE_STR_BAD_WILDCARD" },

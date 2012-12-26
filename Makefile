@@ -7,7 +7,7 @@ CCFLAGS = -Wall -c $(DEBUG)
 LFLAGS  = -Wall $(DEBUG)
 
 markov : $(OBJECTS)
-  $(CC) $(LFLAGS) $(OBJECTS) -o markov
+	$(CC) $(LFLAGS) $(OBJECTS) -o markov
 
 markov.o : misc.h cmd_line.h instr.h driver.h work_status.h
 	$(CC) $(CCFLAGS) markov.cpp
@@ -39,3 +39,4 @@ work_status.o : work_status.h misc.h
 
 clean:
 	\rm -f $(OBJECTS) markov
+

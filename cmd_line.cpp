@@ -5,6 +5,7 @@
 //
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
+//      26-DEC-12   D.Brown     Added immediate command mode
 
 #include "cmd_line.h"
 #include "misc.h"
@@ -23,21 +24,22 @@ static const char * g_NoneStr    = "<none>";
 
 static const StrTabElement_t g_OptionNames[] =
 {
-    { CMDFLGS_SINGLE,     "-1" },       // single line mode
     { CMDFLGS_TEST,       "-test" },    // unit test mode
-    { CMDFLGS_TEST,       "-t" },       // unit test mode
+    { CMDFLGS_TEST,       "-t" },       // 
+    { CMDFLGS_IMMEDIATE,  "-imm" },     // immediate mode 
+    { CMDFLGS_IMMEDIATE,  "-i" },       // 
     { CMDFLGS_DEBUG,      "-debug" },   // debug mode
-    { CMDFLGS_DEBUG,      "-d" },       // debug mode
+    { CMDFLGS_DEBUG,      "-d" },       // 
     { CMDFLGS_VERBOSE,    "-verbose" }, // verbose debug mode
-    { CMDFLGS_VERBOSE,    "-v" },       // verbose debug mode
-    { CMDFLGS_CONSOLE,    "-console" }, // debug to stdout
-    { CMDFLGS_CONSOLE,    "-c" },       // debug to console
+    { CMDFLGS_VERBOSE,    "-v" },       // 
+    { CMDFLGS_CONSOLE,    "-console" }, // debug to console
+    { CMDFLGS_CONSOLE,    "-c" },       // 
     { CMDFLGS_PRINT,      "-print" },   // print program
-    { CMDFLGS_PRINT,      "-p" },       // print program
+    { CMDFLGS_PRINT,      "-p" },       // 
     { CMDFLGS_OPTIONS,    "-options" }, // print options
     { CMDFLGS_HELP,       "-help" },    // help mode
-    { CMDFLGS_HELP,       "-h" },       // help mode
-    { CMDFLGS_HELP,       "?" },        // help mode
+    { CMDFLGS_HELP,       "-h" },       // 
+    { CMDFLGS_HELP,       "?" },        // 
     { -1,                 0 }
 };
 
@@ -46,7 +48,6 @@ static const StrTabElement_t g_OptionNames[] =
 static const StrTabElement_t g_CmdModeNames[] =
 {
     { CMDMODE_FULL_FILE,        "FULL_FILE" },
-    { CMDMODE_SINGLE_LINE,      "SINGLE_LINE" },
     { CMDMODE_UNIT_TEST,        "UNIT_TEST" },
     { -1,                       0 }
 };
@@ -75,9 +76,9 @@ bool CmdLine::PostProcessArguments()
     myCmdMode = CMDMODE_FULL_FILE;
     int num_mode_flags = 0;
 
-    if ( SET_IN( myFlags, CMDFLGS_SINGLE ) )
+    if ( SET_IN( myFlags, CMDFLGS_IMMEDIATE ) )
     {
-        myCmdMode = CMDMODE_SINGLE_LINE;
+        myCmdMode = CMDMODE_IMMEDIATE;
         num_mode_flags++;
     }
 
@@ -101,12 +102,10 @@ bool CmdLine::PostProcessArguments()
             fprintf( stderr, "ERROR: Progam name is required\n" );
             return false;
         }
-        else if ( myCmdMode == CMDMODE_SINGLE_LINE &&
-                  ( myFilenames[FNID_INPUT_FILE] != 0 ||
-                    myFilenames[FNID_OUTPUT_FILE] ) )
+        else if ( SET_IN(myFlags, CMDFLGS_IMMEDIATE) &&
+                  myFilenames[FNID_INPUT_FILE] == 0 )
         {
-            fprintf( stderr, "ERROR: Single line mode should not have in & out filenames\n" );
-            return false;
+            fprintf( stderr, "ERROR: -i option requires input string\n" );
         }
     }
 

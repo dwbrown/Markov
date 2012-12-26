@@ -9,9 +9,13 @@
 //      or in unit test mode where it reads a line and process it, then compares
 //      result with the next line from the input file, and reports an error
 //      if they don't match.
+//      If there are errors opening the input or output files or creating the
+//      immediate file, writes an error message to cerr as well as returning
+//      an error status, so it can specify the name of the file.
 //
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
+//      26-DEC-12   D.Brown     Added immediate command mode
 
 #ifndef DRIVER_H
 #define DRIVER_H
@@ -43,6 +47,9 @@ public:
     WorkStatus_t Run();
 
 private:
+    WorkStatus_t WriteImmediateFile( const char * immediate_filename,
+                                     const char * immediate_string );
+
     WorkStatus_t RunSub( std::istream  & theInputStream,
                          std::ostream  & theOutputStream,
                          CmdMode_t       theCmdMode,
