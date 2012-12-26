@@ -1,0 +1,12 @@
+"*"    -> "a[*]"       ; start
+"x[*]" -> "*"          ; exit
+
+; r: reverse a substring
+"r<,$>"   -> "$"
+"r<?$,%>" -> "r<$,?%>"
+
+; a: reverse each line separately
+"a[$~*]*" -> "a[*]*~r<$,>"
+"a[?$]*"  -> "a[]*~r<?$,>"
+"a[]~*"   -> "a[]*"
+"a[]*"    -> "x[*]"
