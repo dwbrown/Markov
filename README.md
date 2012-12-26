@@ -1,7 +1,7 @@
 Markov
 ======
 
-PltGames-TuringTarpit Repository for Markov string transformation language.
+Markov is a string transformation language, written for the PltGames-TuringTarpit, in C++.
 
 
 Program MARKOV
