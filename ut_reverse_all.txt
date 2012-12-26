@@ -1,0 +1,10 @@
+; Unit Test file "ut_reverse_all.txt"
+; for testing Markov input file "reverse_all.mkv"
+; To run, type: Markov -test -debug reverse_all.mkv ut_reverse_all.txt"
+;
+; Test #1
+hello world
+dlrow olleh
+; Test #2
+hello world~this is a test~one two three
+dlrow olleh~tset a si siht~eerht owt eno
