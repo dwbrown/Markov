@@ -362,7 +362,7 @@ static void PrintProgram1( ostream & out,
                            const Program & theProgram,
                            const char * thisProgramName )
 {
-    out << thisProgramName << "%s program:" << endl;
+    out << thisProgramName << " program:" << endl;
 
     size_t len = theProgram.size();
 
