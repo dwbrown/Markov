@@ -1,3 +1,6 @@
+; program reverse_all.mkv
+; reverse each line of the input file
+
 "*"    -> "a[*]"       ; start
 "x[*]" -> "*"          ; exit
 
