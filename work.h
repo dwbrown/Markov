@@ -68,13 +68,14 @@ private:
 
     WorkStatus_t PlaceFixedFragment( PM_Level & top );
 
-    WorkStatus_t TryToFillGap( PM_Level & top );
-    
+    WorkStatus_t TryToFillGap( PM_Level & top,
+                               bool & top_changed );
+
     // if the wildcard cannot be matched in this sub-gap, returns WS_NO_MATCH,
     // otherwise adds wildcard substring to myWorkData's wildcard occurrences.
     WorkStatus_t CheckAndHandleWildcard( PM_Level & top );
 
-    void PushAdvanceToNextFrag( PM_Level & top );
+    void PushAdvanceToNextFrag( PM_Level & prev );
 
     void MaybePushNextWildcardAttempt( PM_Level & top );
 

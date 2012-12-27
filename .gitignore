@@ -1,11 +1,18 @@
 Debug
 Backup
-Snapshots
+ipch
 Test
 *~
 *.o
 markov
 markov.in
 markov.log
+Markov.opensdf
+Markov.sdf
+Markov.sln
+Markov.suo
+Markov.vcxproj
+Markov.vcxproj.filters
+Markov.vcxproj.user
 
 

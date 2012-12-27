@@ -52,7 +52,7 @@
 //                                  which have been matched by wildcards
 //                                  in the pattern.
 //
-//          myFirstWildcardOccurrence:  
+//          myFirstWildcardOccurrence:
 //                                  This is a vector indexed by wildcard type
 //                                  which contains the pointer in From String
 //                                  of the first occurrence of that wildcard,
@@ -67,7 +67,7 @@
 //                              If we call GetCurPat() and there is no
 //                              pattern string set, we will assert.
 //                              The pattern string has these sub-data items:
-//                  
+//
 //          myPatternFragments:     This is a vector which describes the
 //                                  start and length in the pattern string
 //                                  of each contiguous set of non-wildcard
@@ -210,12 +210,12 @@ public:
     // Sets the current pattern to nothing.
     void UnrefCurrentPattern();
 
-    // Gets the current pattern string, or asserts if there is no 
+    // Gets the current pattern string, or asserts if there is no
     // current pattern.
     const TaggedString & GetCurPat() const;
 
     // Returns true if there is a current pattern set by SetCurrentPattern
-    // or false if the current pattern has been unreferenced by 
+    // or false if the current pattern has been unreferenced by
     // UnrefCurrentPattern.
     bool HasCurPat() const;
 
@@ -274,8 +274,8 @@ public:
 
     // Verifies that the substring matched by pattern fragment frag_ix
     // matches the From String starting at index fromstr_ix.
-    // The pattern fragment may be in the pattern or an already 
-    // matched wildcard.  If match, store the position in 
+    // The pattern fragment may be in the pattern or an already
+    // matched wildcard.  If match, store the position in
     // myPatFragCurrentPos[frag_ix].
     bool VerifyPatFragPos( size_t frag_ix,
                            int fromstr_pos );

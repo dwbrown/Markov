@@ -22,7 +22,7 @@ static const size_t EXIT_STEP  = 1;     // second step in program
 
 // set this to myUID value to break at
 // or set to 0 for no debug breaking
-static const size_t BREAK_AT_UID = 0;  
+static const size_t BREAK_AT_UID = 0;
 
 
 // this struct contains everything needed for pattern matching on a
@@ -109,7 +109,7 @@ WorkStatus_t Work::DoTransformations(
 
             if ( status == WS_CONTINUE )
             {
-                myWorkData.SetCurrentPattern( 
+                myWorkData.SetCurrentPattern(
                                 myProgram[myPC].GetPatternStr() );
 
                 status = DoPatternMatch( myProgram[myPC].GetPatternStr(),
@@ -117,7 +117,7 @@ WorkStatus_t Work::DoTransformations(
 
                 if ( status == WS_OK )
                 {
-                    status = DoReplacement( 
+                    status = DoReplacement(
                                     myProgram[myPC].GetReplacementStr() );
 
                     found_any = true;
@@ -142,7 +142,7 @@ WorkStatus_t Work::DoTransformations(
                         {
                             // next attempt should retry at current step
                             // unless it is currently at the start step
-                            myPC = max( myPC, EXIT_STEP );  
+                            myPC = max( myPC, EXIT_STEP );
                             myWorkData.MoveToStringToFromString();
                             status = WS_CONTINUE;
                         }
@@ -243,7 +243,7 @@ WorkStatus_t Work::DoReplacement( const TaggedString & theReplacementStr )
         }
         else
         {   // wildcard char
-            myWorkData.GetNextWildcardOccurrence( 
+            myWorkData.GetNextWildcardOccurrence(
                             wt, cur_wildcard_occurrence[wt] );
 
             if ( cur_wildcard_occurrence[wt] < 0 )
@@ -252,7 +252,7 @@ WorkStatus_t Work::DoReplacement( const TaggedString & theReplacementStr )
             }
             else
             {
-                myWorkData.AppendWildcardOccurrenceToToString( 
+                myWorkData.AppendWildcardOccurrenceToToString(
                                         cur_wildcard_occurrence[wt] );
             }
         }
@@ -301,6 +301,11 @@ WorkStatus_t Work::DoPatternMatch( const TaggedString & pat,
         }
 
         myUID++;
+
+        if ( status == WS_NO_MATCH && !myStack.empty() )
+        {   // no match, but still more stuff to try on the stack
+            status = WS_CONTINUE;
+        }
     }
 
     if ( status == WS_CONTINUE && myStack.empty() )
@@ -330,7 +335,10 @@ WorkStatus_t Work::DoPatternMatch1()
     {
         status = PlaceFixedFragment( top );
 
-        myWorkData.UnmatchFromString( top.myFsWildIx );
+        if ( status == WS_CONTINUE )
+        {
+            myWorkData.UnmatchFromString( top.myFsWildIx );
+        }
 
         if ( status == WS_CONTINUE &&
              top.myFragIx < num_frags )
@@ -353,13 +361,15 @@ WorkStatus_t Work::DoPatternMatch1()
             myStack.push_back( top );
         }
     }
-    else 
+    else
     {
-        bool skip_advance_to_next_frag = false;
+        bool top_changed = false;
+
+        myWorkData.UnmatchFromString( top.myFsWildIx );
 
         if ( top.myPatWildIx < top.myPatFixedIx )
         {
-            status = TryToFillGap( top );
+            status = TryToFillGap( top, top_changed );
 
             if ( status == WS_CONTINUE )
             {
@@ -369,30 +379,30 @@ WorkStatus_t Work::DoPatternMatch1()
             if ( status == WS_CONTINUE )
             {
                 status = CheckAndHandleWildcard( top );
-            }
-
-            if ( status == WS_CONTINUE &&
-                 top.myPatWildIx < top.myPatFixedIx )
-            {   // at least one more wildcard in this gap
-                myStack.push_back(top);
-                skip_advance_to_next_frag = true;
+                top_changed = status == WS_CONTINUE;
             }
         }
 
-        if ( status == WS_CONTINUE && !skip_advance_to_next_frag &&
-             top.myFragIx <= num_frags && num_frags != 0 )
+        if ( status == WS_CONTINUE && top_changed &&
+             top.myPatWildIx < top.myPatFixedIx )
         {
             myStack.push_back( top );
+        }
+
+        if ( status == WS_CONTINUE &&
+             top.myFragIx <= num_frags && num_frags != 0 &&
+             top.myPatWildIx == top.myPatFixedIx )
+        {
             PushAdvanceToNextFrag( top );
         }
 
-        if ( status == WS_CONTINUE && 
+        if ( status == WS_CONTINUE &&
              top.myFragIx == num_frags &&
              top.myPatWildIx == top.myPatFixedIx )
         {
             status = WS_OK;
-            myWorkData.SetPrefixAndSuffix( 
-                    top.myFsLeftIx >= 0 ? top.myFsLeftIx : top.myFsWildIx, 
+            myWorkData.SetPrefixAndSuffix(
+                    top.myFsLeftIx >= 0 ? top.myFsLeftIx : top.myFsWildIx,
                     top.myFsFixedIx );
         }
     }
@@ -414,8 +424,8 @@ WorkStatus_t Work::DoPatternMatch1()
 // only the first char of the string.
 
 // If there are any *$% wildcards in the gap before the first fragment,
-// the gap will consist of everything from the beginning of the From String 
-// to the start of the fragment, otherwise the gap will consist of the count 
+// the gap will consist of everything from the beginning of the From String
+// to the start of the fragment, otherwise the gap will consist of the count
 // of the number of ?. wildcards just before the fragment.
 // ie: for "*A" the * will match everything before the first occurrence of A,
 // and for ".A" the . will match the character before the first A.
@@ -448,9 +458,9 @@ WorkStatus_t Work::PlaceFixedFragment( PM_Level & top )
     {   // after last fragment.
         // set myPatWildIx to end of previous fragment, and
         // myPatFixedIx to the end of the pattern
-        int prev_pat_fixed_start = 
+        int prev_pat_fixed_start =
                 myWorkData.GetPatFragStartInPat( top.myFragIx-1 );
-        int prev_pat_fixed_len = 
+        int prev_pat_fixed_len =
                 myWorkData.GetPatFragLengthInPat( top.myFragIx-1 );
         top.myPatWildIx = prev_pat_fixed_start + prev_pat_fixed_len;
         top.myPatFixedIx = (int)pat.size();
@@ -467,7 +477,7 @@ WorkStatus_t Work::PlaceFixedFragment( PM_Level & top )
         assert( prev_fs_frag_start >= 0 && prev_fs_frag_len >= 0 );
         top.myFsWildIx = prev_fs_frag_start + prev_fs_frag_len;
         int max_span = MaxWildcardSpan( top.myPatWildIx, top.myPatFixedIx );
-        top.myFsFixedIx = 
+        top.myFsFixedIx =
                 max_span == -1 ? (int)fs.size() : top.myFsWildIx + max_span;
         top.myFsWildEndIx = top.myFsFixedIx;
         top.myFixedIsMatched = true;
@@ -489,15 +499,16 @@ WorkStatus_t Work::PlaceFixedFragment( PM_Level & top )
         {
             top.myFsFixedIx = myWorkData.GetPatFragPosInFromStr( top.myFragIx );
             int len = myWorkData.GetPatFragLengthInFromStr( top.myFragIx );
-            assert( top.myFsFixedIx >= 0 && len >= 0 ); 
+            assert( top.myFsFixedIx >= 0 && len >= 0 );
 
             top.myFixedIsMatched = true;
 
-            if ( top.myFsLeftIx < 0 || top.myFsLeftIx > top.myFsFixedIx )
+            if ( top.myFragIx == 0 || top.myFsLeftIx < 0 ||
+                 top.myFsLeftIx > top.myFsFixedIx )
             {
                 top.myFsLeftIx = top.myFsFixedIx;
             }
-       
+
             if ( top.myFragIx == 0 )
             {   // first fragment.
                 // If any *$% wildcards, gap will be from the beginning of the
@@ -529,7 +540,8 @@ WorkStatus_t Work::PlaceFixedFragment( PM_Level & top )
 // cause the following wildcards in the gap to fail, reduce the size of
 // the maximum span for this wildcard to allow 1 char for each ?.
 // wildcard to the right
-WorkStatus_t Work::TryToFillGap( PM_Level & top )
+WorkStatus_t Work::TryToFillGap( PM_Level & top,
+                                 bool & top_changed )
 {
     WorkStatus_t status = WS_CONTINUE;
 
@@ -544,6 +556,7 @@ WorkStatus_t Work::TryToFillGap( PM_Level & top )
         }
         else
         {
+            top_changed = top.myFsWildEndIx != top.myFsWildIx + 1;
             top.myFsWildEndIx = top.myFsWildIx + 1;
         }
     }
@@ -551,9 +564,11 @@ WorkStatus_t Work::TryToFillGap( PM_Level & top )
     {
         int span = MinWildcardSpan( top.myPatWildIx + 1, top.myPatFixedIx );
 
-        top.myFsWildEndIx = max( top.myFsWildIx,
-                                 min( top.myFsWildEndIx,
-                                      top.myFsFixedIx - span ) );
+        int we = max( top.myFsWildIx,
+                      min( top.myFsWildEndIx, top.myFsFixedIx - span ) );
+
+        top_changed = top.myFsWildEndIx != we;
+        top.myFsWildEndIx = we;
     }
 
     return status;
@@ -606,7 +621,7 @@ WorkStatus_t Work::CheckAndHandleWildcard( PM_Level & top )
 
         if ( wo >= 0 )
         {
-            if ( !myWorkData.CompareSubstringWithWildcard( 
+            if ( !myWorkData.CompareSubstringWithWildcard(
                                 wt, top.myFsWildIx, matched_len ) )
             {
                 return WS_NO_MATCH;
@@ -639,13 +654,12 @@ WorkStatus_t Work::CheckAndHandleWildcard( PM_Level & top )
 // at this point we know that top.myFragIx < number of fragments
 // on exit, myPatWildIx and myPatFixedIx (of the top of the stack)
 // will point to just after the end of the previous fragment
-// in the pattern, and myFsWildIx, myFsWildEndIx and myFsFixedIx will 
+// in the pattern, and myFsWildIx, myFsWildEndIx and myFsFixedIx will
 // point to just after the end of the previous fragment in the from string.
 // We don't know exactly where the fragment will start in the from string,
 // but we know it can't be before this point.
-void Work::PushAdvanceToNextFrag( PM_Level & top )
+void Work::PushAdvanceToNextFrag( PM_Level & prev )
 {
-    PM_Level & prev = myStack.back();
     PM_Level next = prev;
 
     next.myFragIx++;
@@ -778,13 +792,13 @@ void Work::PrintWorkState( ostream & out,
     static const size_t MAX_STACK_TO_PRINT = 10;
 
     out << "############# Work State #############" << endl;
-    
+
     if ( status != WS_CONTINUE )
     {
         out << "### Pattern Match Status " << GetWorkStatusStr(status) << endl;
     }
 
-    out << "### PC: " << myPC << "  src_line: " << 
+    out << "### PC: " << myPC << "  src_line: " <<
         myProgram[myPC].GetLineNumber() << "  uid: " << myUID << endl;
 
     if ( myWorkData.HasCurPat() )
@@ -948,7 +962,7 @@ void Work::DebugPrintTransition( ostream & out ) const
     out << "################ Transition ##############" << endl;
     const TaggedString & fs = myWorkData.GetFromStr();
 
-    out << "## PC: " << myPC << "  src_line: " << 
+    out << "## PC: " << myPC << "  src_line: " <<
         myProgram[myPC].GetLineNumber();
     out << "  uid: " << myUID;
 
