@@ -48,6 +48,7 @@ static const StrTabElement_t g_OptionNames[] =
 static const StrTabElement_t g_CmdModeNames[] =
 {
     { CMDMODE_FULL_FILE,        "FULL_FILE" },
+    { CMDMODE_IMMEDIATE,        "IMMEDIATE" },
     { CMDMODE_UNIT_TEST,        "UNIT_TEST" },
     { -1,                       0 }
 };

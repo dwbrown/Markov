@@ -302,15 +302,15 @@ WorkStatus_t Driver::RunSub( istream  & theInputStream,
 
         status = ReadTaggedString( theInputStream, input_string, 
                                    line_number, 
-                                   theCmdMode != CMDMODE_FULL_FILE,
-                                   theCmdMode != CMDMODE_FULL_FILE );
+                                   theCmdMode == CMDMODE_UNIT_TEST,
+                                   theCmdMode == CMDMODE_UNIT_TEST );
 
         if ( dbg_ptr != 0 )
         {
             DebugWriteInputString( dbg, input_string, line_number );
         }
 
-        if ( theCmdMode != CMDMODE_FULL_FILE )
+        if ( theCmdMode == CMDMODE_UNIT_TEST )
         {
             DebugWriteInputString( theOutputStream, input_string, line_number );
         }
@@ -333,8 +333,7 @@ WorkStatus_t Driver::RunSub( istream  & theInputStream,
         }
         else
         {
-            WriteTaggedString( theOutputStream, output_string,
-                               theCmdMode == CMDMODE_FULL_FILE );
+            WriteTaggedString( theOutputStream, output_string, true );
         }
 
         if ( status == WS_OK && theCmdMode == CMDMODE_UNIT_TEST )
@@ -422,15 +421,14 @@ WorkStatus_t Driver::WriteImmediateFile( const char * immediate_filename,
 WorkStatus_t Driver::Run()
 {
     WorkStatus_t status = WS_OK;
-    const char * input_filename = myCmdLine.InputFileName();
+    string input_filename( myCmdLine.InputFileName() );
 
     if ( myCmdLine.CmdMode() == CMDMODE_IMMEDIATE )
     {
-        string actual_input_filename( myCmdLine.ThisProgramName() );
-        actual_input_filename.append( IMMEDIATE_EXTENSION );
-        input_filename = actual_input_filename.c_str();
+        input_filename = myCmdLine.ThisProgramName();
+        input_filename.append( IMMEDIATE_EXTENSION );
 
-        status = WriteImmediateFile( actual_input_filename.c_str(),
+        status = WriteImmediateFile( input_filename.c_str(),
                                      myCmdLine.InputFileName() );
     }
 
@@ -438,7 +436,7 @@ WorkStatus_t Driver::Run()
 
     if ( status == WS_OK && !myCmdLine.ReadFromStdin() )
     {
-        in.open( input_filename );
+        in.open( input_filename.c_str() );
 
         if ( !in )
         {
