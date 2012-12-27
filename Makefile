@@ -1,3 +1,14 @@
+# Makefile for program Markov (for Linux, using g++)
+#
+# Command line:
+#    make               - make the Markov program
+#    make all           - same as make
+#    make clean         - delete markov and all .o files
+#
+# HISTORY:
+#    25-DEC-12   D.Brown   Created
+#    27-DEC-12   D.Brown   Added make all, added comments 
+
 OBJECTS = markov.o cmd_line.o driver.o instr.o misc.o tagged_char.o \
           work.o work_data.o work_status.o
 TARGET  = markov
@@ -36,6 +47,8 @@ work_data.o : work_data.cpp work_data.h tagged_char.h misc.h
 
 work_status.o : work_status.h misc.h
 	$(CC) $(CCFLAGS) work_status.cpp
+
+all : markov
 
 clean:
 	\rm -f $(OBJECTS) markov
