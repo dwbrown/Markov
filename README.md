@@ -1,7 +1,7 @@
 Markov
 ======
 
-Markov is a string transformation language, written for the PltGames-TuringTarpit, in C++.
+Markov is a string transformation language, written in C++ for the PltGames TuringTarpit.
 
 
 Program MARKOV
@@ -109,7 +109,10 @@ comments will be skipped before the pair of input and expected
 output lines.
 
 In Immediate mode, the contents of the input string are given on the 
-command line, possibly in quotes, preceeded by the "-i" option.
+command line, possibly in quotes, preceeded by the "-i" option.  Note
+that on Windows, command line arguments cannot contain blanks, and
+double quotes are passed to the program as part of the argument, so on 
+Windows immediate mode is limited to single word inputs, not in quotes.
 
 In Unit Test mode and Immediate mode, all "~" characters in the input 
 line will be converted to end-of-lines in the input string (which will 
@@ -142,7 +145,7 @@ before comparing with the expected result line.
         <output_file_name> |
         <empty>                         ; write to standard output
 
-The options may be abreviated to a dash followed by a single letter
+The options may be abreviated to a dash followed by a single letter.
 
 The program result code will be 0 for OK or 100 for any error, plus 
 on error an error message will be written to standard error.
@@ -162,7 +165,12 @@ There are unit test input files for each of these, with file prefix
 "ut_" and suffix ".txt" which can be run.  For example, to test the 
 "add.mkv" program with various inputs,  type command:
 
-        markov -test add.mkv ut_add.mkv
+        ./markov -test add.mkv ut_add.mkv
+        
+To print the first 50 Fibonacci numbers, type command:
+
+        ./markov fib.mkv -i 50
+        
 
 DEBUGGING:
 
@@ -189,6 +197,6 @@ function after the specified attempted transformation.
 
 DEVELOPMENT LANGUAGE:
 
-The Markov program was developed using C++ for Microsoft Visual Studio
-version 10.  It was ported to Ubuntu and is compiled with 
-gcc version 4.7.2.
+The Markov program was developed using C++ for Microsoft Visual 
+Studio 2010.  It was ported to Ubuntu Linux running gcc 
+version 4.7.2.
