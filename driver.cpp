@@ -303,7 +303,7 @@ WorkStatus_t Driver::RunSub( istream  & theInputStream,
         status = ReadTaggedString( theInputStream, input_string, 
                                    line_number, 
                                    theCmdMode == CMDMODE_UNIT_TEST,
-                                   theCmdMode == CMDMODE_UNIT_TEST );
+                                   theCmdMode != CMDMODE_FULL_FILE );
 
         if ( dbg_ptr != 0 )
         {
