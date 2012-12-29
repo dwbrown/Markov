@@ -57,13 +57,16 @@ static WorkStatus_t OpenDebugFile( ofstream & dbg,
 // If theStopAtEndOfLine then stops reading at the end of the line,
 // and doesn't add the end-of-line character to theInputString.
 // If theCvtTildaToTaggedTilda is true converts ~ to tagged ~
+// If theCvtToTagged is true \ will cause next char to be tagged.
 static WorkStatus_t ReadTaggedString( istream & theInStrm,
                                       TaggedString & theInputString,
                                       unsigned & theLineNumber,
                                       bool theStopAtEndOfLine,
-                                      bool theCvtTildaToTaggedTilda)
+                                      bool theCvtTildaToTaggedTilda,
+                                      bool theCvtToTagged )
 {
     WorkStatus_t status = WS_CONTINUE;
+    bool next_is_tagged = false;
 
     while ( status == WS_CONTINUE )
     {
@@ -92,16 +95,39 @@ static WorkStatus_t ReadTaggedString( istream & theInStrm,
                 theInputString.push_back( 
                        ToTaggedChar(SPECIAL_END_OF_LINE_CHAR) );
             }
+
+            next_is_tagged = false;
         }
-        else if ( c == SPECIAL_END_OF_LINE_CHAR && theCvtTildaToTaggedTilda )
+        else
         {
-             theInputString.push_back( ToTaggedChar(c) );
+            TaggedChar_t tc = ToUntaggedChar( c );
+
+            if ( next_is_tagged )
+            {
+                tc = ToTaggedChar( c );
+                next_is_tagged = false;
+            }
+
+            if ( theCvtToTagged && tc == '\\' )
+            {
+                next_is_tagged = true;
+            }
+            else
+            {
+                if ( c == SPECIAL_END_OF_LINE_CHAR && 
+                     theCvtTildaToTaggedTilda )
+                {
+                    theInputString.push_back( ToTaggedChar(c) );
+                }
+                else if ( c >= FIRST_PRINTING_CHAR && c <= LAST_PRINTING_CHAR )
+                {
+                    theInputString.push_back( tc );
+                }
+                // else ignore nonprinting chars
+
+                next_is_tagged = false;
+            }
         }
-        else if ( c >= FIRST_PRINTING_CHAR && c <= LAST_PRINTING_CHAR )
-        {
-            theInputString.push_back( ToUntaggedChar(c) );
-        }
-        // else ignore nonprinting chars
     }
 
     return status;
@@ -303,7 +329,8 @@ WorkStatus_t Driver::RunSub( istream  & theInputStream,
         status = ReadTaggedString( theInputStream, input_string, 
                                    line_number, 
                                    theCmdMode == CMDMODE_UNIT_TEST,
-                                   theCmdMode != CMDMODE_FULL_FILE );
+                                   theCmdMode != CMDMODE_FULL_FILE,
+                                   theCmdMode == CMDMODE_UNIT_TEST );
 
         if ( dbg_ptr != 0 )
         {
@@ -341,7 +368,7 @@ WorkStatus_t Driver::RunSub( istream  & theInputStream,
             TaggedString expected;
 
             status = ReadTaggedString( theInputStream, expected, 
-                                       line_number, true, true );
+                                       line_number, true, true, true );
 
             if ( status == WS_OK )
             {
