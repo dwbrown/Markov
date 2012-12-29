@@ -1,7 +1,7 @@
 Markov
 ======
 
-Markov is a string transformation language, written in C++ for the PltGames TuringTarpit.
+Markov is a string rewriting language, written in C++ for the PltGames TuringTarpit.
 
 This program uses string transformations to convert an input string into an output string.  
 The input program is a series of transformations like:
@@ -88,9 +88,8 @@ the output string.
 
 The rest of the transformations are attempted in a top down manner.
 If a transformation fails, the next transformation below is attempted.
-If a transformation succeeds, it is repeated as many times as possible 
-until it fails, then the program will start again at the top and 
-attempt  the second (ending) transformation, and so forth.  If no 
+If a transformation succeeds, then the program will start again at the top and 
+attempt the second (ending) transformation step, and so forth.  If no 
 transformation is matched, the MARKOV program will report a failure.
 
 Other than the wildcard characters, the tagged characters in the match 
@@ -128,7 +127,9 @@ In Unit Test mode and Immediate mode, all "~" characters in the input
 line will be converted to end-of-lines in the input string (which will 
 be converted to a tagged "~" character).  In Unit Test mode, all 
 end-of-lines in the output string will be converted to "~" characters 
-before comparing with the expected result line.
+before comparing with the expected result line.  Also, any characters
+preceeded by a "\" will be tagged.  This will allow functions to be
+tested directly from the unit test input file.
 
 
 COMMAND LINE SYNTAX:
@@ -173,7 +174,12 @@ The following examples are provided:
         add.mkv         - add two arbitrary precision unsigned 
                           integers, separated by a blank
         fib.mkv	        - computes the first N fibonacci numbers, 
-                          where N is the input string.
+                          where N is the input string
+        logic.mkv       - contains useful functions returning boolean
+                          values F or T (plus anything not F is true).
+        sum_of_even_fib.mkv
+                        - computes the sum of the even fibonacci
+                          numbers less than N, where N is the input string.
 
 There are unit test input files for each of these, with file prefix 
 "ut_" and suffix ".txt" which can be run using the "-test" option.
@@ -185,6 +191,10 @@ To print the first 50 Fibonacci numbers, type command:
 
         ./markov fib.mkv -i 50
         
+To return the sum of the even fibonacci numbers less than 4000000, type:
+
+        ./markov sum_of_even_fib.mkv -i 4000000
+
 
 DEBUGGING:
 
@@ -195,16 +205,19 @@ was used) for each transformation performed.  In Unit Test mode,
 the debug output file will be reset before each input line is 
 processed, so when the program exits the debug output file will 
 only contain the transformations for the last input line.
+If the program returns an error like ERROR_NO_MATCHING_XFORMS then
+run with the -debug option and look at the last transformation to 
+determine the working string which couldn't be matched.
 
 If both "-debug" and "-verbose" are specified, every attempted
 transformation will be included in file "markov.log" as well as 
 the transformations which succeeded.  If "-debug" and "-console"  
-are specified (usually with "-verbose" specified as well) the 
-debug information is also written to standard output, which can 
-make it easier to use a debugger to debug the code.  Each output to 
-the debug file will include the program instruction number and 
-source line number, plus a unique id "uid" which is incremented 
-each attempted transformation.  There is a constant BREAK_AT_UID
+are specified the debug information is also written to standard output, 
+which can make it easier to use a debugger to debug the code
+with a source level debugger.  Each output to the debug file will 
+include the program instruction number and source line number, 
+plus a unique id "uid" which is incremented each attempted
+transformation.  There is a constant BREAK_AT_UID
 in file "work.cpp" which, if nonzero, means to call a breakpoint 
 function after the specified attempted transformation.
 
