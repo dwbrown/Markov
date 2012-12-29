@@ -6,6 +6,7 @@
 // HISTORY:
 //      14-DEC-12   D.Brown     Created
 //      26-DEC-12   D.Brown     If start xform fails then error
+//      28-DEC-12   D.Brown     Don't retry same step if it succeeds
 
 #include "work.h"
 #include "work_data.h"
@@ -87,21 +88,12 @@ WorkStatus_t Work::DoTransformations(
     size_t pgm_size = myProgram.size();
     myPC = START_STEP;
     WorkStatus_t status = WS_CONTINUE;
-    bool found_any = false;
 
     while ( status == WS_CONTINUE )
     {
         if ( myPC == pgm_size )
         {
-            if ( found_any )
-            {
-                myPC = EXIT_STEP;
-                found_any = false;
-            }
-            else
-            {
-                status = WS_ERROR_NO_MATCHING_XFORMS;
-            }
+            status = WS_ERROR_NO_MATCHING_XFORMS;
         }
         else
         {
@@ -120,8 +112,6 @@ WorkStatus_t Work::DoTransformations(
                     status = DoReplacement(
                                     myProgram[myPC].GetReplacementStr() );
 
-                    found_any = true;
-
                     if ( status == WS_CONTINUE )
                     {
                         if ( myDebugToConsole )
@@ -139,10 +129,8 @@ WorkStatus_t Work::DoTransformations(
                             status = WS_OK;
                         }
                         else
-                        {
-                            // next attempt should retry at current step
-                            // unless it is currently at the start step
-                            myPC = max( myPC, EXIT_STEP );
+                        {   // start over from exit step
+                            myPC = EXIT_STEP;
                             myWorkData.MoveToStringToFromString();
                             status = WS_CONTINUE;
                         }
@@ -152,22 +140,15 @@ WorkStatus_t Work::DoTransformations(
                 myWorkData.UnrefCurrentPattern();
             }
 
-            if ( status == WS_NO_MATCH && myPC == START_STEP )
-            {
-                status = WS_ERROR_START_STEP_NO_MATCH;
-            }
-
             if ( status == WS_NO_MATCH )
             {
-                status = WS_CONTINUE;
-
-                if ( found_any )
+                if ( myPC == START_STEP )
                 {
-                    found_any = false;
-                    myPC = EXIT_STEP;
+                    status = WS_ERROR_START_STEP_NO_MATCH;
                 }
                 else
                 {
+                    status = WS_CONTINUE;
                     myPC++;
                 }
             }
