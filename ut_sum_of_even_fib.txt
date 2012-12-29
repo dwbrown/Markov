@@ -1,0 +1,14 @@
+; File ut_sum_of_even_fib.mkv
+; Test Markov program sum_of_even_fib.
+; To run, type: ./markov -test sum_of_even_fib.mkv ut_sum_of_even_fib.txt
+;
+; Test #1 - even fibs below 10 are 8 2
+10
+10
+; Test #2 - even fibs below 40 are 34 8 2
+40
+44
+; Test #3 - even fibs are 3524578 832040 196418 10946 2584 610 144 34 2
+4000000
+4613732
+

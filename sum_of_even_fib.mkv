@@ -1,0 +1,276 @@
+; Markov program sum_of_even_fib
+; Given a number N, returns the sum of the even Fibonacci numbers
+; less than N.
+; Note that this is Project Euler problem #2 (with N=4000000)
+
+"$" -> "s1:TRIM($)"           ; starting step
+"$" -> "$"                    ; ending step
+
+; TRIM - remove leading and trailing blanks and pairs of blanks
+"TRIM(\ $)"    -> "TRIM($)"
+"TRIM($\ )"    -> "TRIM($)"
+"TRIM($\ \ %)" -> "TRIM($\ %)"
+"TRIM($)"      -> "$"
+
+; FIRST - remove first of list where elements are separated by blanks.
+; first of empty list returns nothing.
+"FIRST(\ $)"      -> "FIRST($)"
+"FIRST(.$\ %)"    -> ".$"
+"FIRST(.$)"       -> ".$"
+"FIRST()"         -> ""
+
+; REST - return rest of list where elements are separated by blanks
+"REST(.$\ %)"     -> "%"
+"REST($)"         -> ""
+
+;;; ***********************************
+;;; include most of contents of add.mkv
+;;; ***********************************
+
+; ad: add two digits.  arguments are two digits with no separator
+"ad(\0?)" -> "?"
+"ad(?\0)" -> "?"
+
+"ad(\1\1)" -> "\2"
+"ad(\1\2)" -> "\3"
+"ad(\1\3)" -> "\4"
+"ad(\1\4)" -> "\5"
+"ad(\1\5)" -> "\6"
+"ad(\1\6)" -> "\7"
+"ad(\1\7)" -> "\8"
+"ad(\1\8)" -> "\9"
+"ad(\1\9)" -> "ac\0"
+"ad(?\1)"  -> "ad(\1?)"
+
+"ad(\2\2)" -> "\4"
+"ad(\2\3)" -> "\5"
+"ad(\2\4)" -> "\6"
+"ad(\2\5)" -> "\7"
+"ad(\2\6)" -> "\8"
+"ad(\2\7)" -> "\9"
+"ad(\2\8)" -> "ac\0"
+"ad(\2\9)" -> "ac\1"
+"ad(?\2)"  -> "ad(\2?)"
+
+"ad(\3\3)" -> "\6"
+"ad(\3\4)" -> "\7"
+"ad(\3\5)" -> "\8"
+"ad(\3\6)" -> "\9"
+"ad(\3\7)" -> "ac\0"
+"ad(\3\8)" -> "ac\1"
+"ad(\3\9)" -> "ac\2"
+"ad(?\3)"  -> "ad(\3?)"
+
+"ad(\4\4)" -> "\8"
+"ad(\4\5)" -> "\9"
+"ad(\4\6)" -> "ac\0"
+"ad(\4\7)" -> "ac\1"
+"ad(\4\8)" -> "ac\2"
+"ad(\4\9)" -> "ac\3"
+"ad(?\4)"  -> "ad(\4?)"
+
+"ad(\5\5)" -> "ac\0"
+"ad(\5\6)" -> "ac\1"
+"ad(\5\7)" -> "ac\2"
+"ad(\5\8)" -> "ac\3"
+"ad(\5\9)" -> "ac\4"
+"ad(?\5)"  -> "ad(\5?)"
+
+"ad(\6\6)" -> "ac\2"
+"ad(\6\7)" -> "ac\3"
+"ad(\6\8)" -> "ac\4"
+"ad(\6\9)" -> "ac\5"
+"ad(?\6)"  -> "ad(\6?)"
+
+"ad(\7\7)" -> "ac\4"
+"ad(\7\8)" -> "ac\5"
+"ad(\7\9)" -> "ac\6"
+"ad(?\7)"  -> "ad(\7?)"
+
+"ad(\8\8)" -> "ac\6"
+"ad(\8\9)" -> "ac\7"
+"ad(\9\8)" -> "ac\7"
+
+"ad(\9\9)" -> "ac\8"
+
+; ac : add carry
+"?ac" -> "ad(?\1)"
+
+; + : add two positive integers.  arguments are separated by a comma
+"+($?,%.)" -> "+($,%)ad(?.)"   ; move next digit to rear
+"+(,%.)"   -> "+(,%)."         ; no more digits for left operand
+"+($?,)"   -> "+($,)?"         ; no more digits for right operand
+"+(,)ac"   -> "\1"             ; no more digits to add carry into
+"+(,)"     -> ""               ; get rid of final add
+
+
+;;; **************************************
+;;; include most of contents for logic.mkv
+;;; **************************************
+
+;;; *****************
+;;; new for logic.mkv
+;;; *****************
+
+"NOT(\F)"    -> "\T"
+"NOT($)"     -> "\F"
+
+"OR(\F,\F)"  -> "\F"
+"OR($,%)"    -> "\T"
+
+"AND(\F,\F)" -> "\F"
+"AND(\F,$)"  -> "\F"
+"AND($,\F)"  -> "\F"
+"AND($,%)"   -> "\T"
+
+; IF{a,b,c} evaluates all three and if a is true returns b 
+; otherwise returns c.  Be careful neither a,b nor c contain }.
+"IF{\T,$,%}"  -> "$"
+"IF{\F,$,%}"  -> "%"
+"IF{$,*"      -> "If1{$,*" 
+"If1{\T,$,%}" -> "$"
+"If1{\F,$,%}" -> "%" 
+
+; ELZ: eliminate leading zeros
+"ELZ(\0)"     -> "\0"
+"ELZ(\0$)"    -> "ELZ($)"
+"ELZ($)"      -> "$"
+
+; EQ: integer equality
+"EQ($,$)"     -> "\T"
+"EQ($,%)"     -> "EQ1(ELZ($),ELZ(%))"
+"EQ1($,$)"    -> "\T"
+"EQ1($,%)"    -> "\F"
+
+; NE: integer inequality
+"NE($,%)"     -> "NOT(EQ($,%))"
+
+
+; Nd(a) returns number of digits in an integer
+"Nd($)"       -> "Nd1($,\0)"
+"Nd1(\0,\0)"  -> "1"
+"Nd1(\0$,\0)" -> "Nd1($,\0)"
+"Nd1(.,$)"    -> "+($,\1)"
+"Nd1(.$,%)"   -> "Nd1($,+(%,\1))"
+
+
+; LT(a,b) returns a < b
+
+;    LtD(a,b) is a < b where a and b are single digits
+"LtD(\0,\0)" -> "\F"
+"LtD(\1,\0)" -> "\F"
+"LtD(\1,\1)" -> "\F"
+"LtD(\2,\0)" -> "\F"
+"LtD(\2,\1)" -> "\F"
+"LtD(\2,\2)" -> "\F"
+"LtD(\3,\0)" -> "\F"
+"LtD(\3,\1)" -> "\F"
+"LtD(\3,\2)" -> "\F"
+"LtD(\3,\3)" -> "\F"
+"LtD(\4,\0)" -> "\F"
+"LtD(\4,\1)" -> "\F"
+"LtD(\4,\2)" -> "\F"
+"LtD(\4,\3)" -> "\F"
+"LtD(\4,\4)" -> "\F"
+"LtD(\5,\9)" -> "\T"
+"LtD(\5,\8)" -> "\T"
+"LtD(\5,\7)" -> "\T"
+"LtD(\5,\6)" -> "\T"
+"LtD(\5,$)"  -> "\F"
+"LtD(\6,\9)" -> "\T"
+"LtD(\6,\8)" -> "\T"
+"LtD(\6,\7)" -> "\T"
+"LtD(\6,?)"  -> "\F"
+"LtD(\7,\9)" -> "\T"
+"LtD(\7,\8)" -> "\T"
+"LtD(\7,?)"  -> "\F"
+"LtD(\8,\9)" -> "\T"
+"LtD(\8,?)"  -> "\F"
+"LtD(\9,?)"  -> "\F"
+"LtD(?,.)"   -> "\T"
+"LtD($,%)"   -> "\F"  ; might happen in IF{ for ignored expression
+
+;    Lt1(a,b) is a<b when a and b have the same # of digits
+"Lt1(,)"     -> "\F"
+"Lt1(.,.)"   -> "\F"
+"Lt1(.$,.%)" -> "Lt1($,%)"
+"Lt1(.$,?%)" -> "LtD(.,?)"
+"Lt1($,%)"   -> "\T"
+
+;    Lt2(a,b) is \F if a has more digits than b,
+;    \T if b has more digits than a, or \F if
+;    they have the same number of digits (this will
+;    happen when GE2 is the else part of an if when
+;    the test is true -- the \F here will not be used).
+"Lt2(,.$)"   -> "\T"
+"Lt2(.$,)"   -> "\F"
+"Lt2(.$,?%)" -> "Lt2($,%)"
+"Lt2($,%)"   -> "\F"   ; might happen if IF{ for ignored expression
+
+"LT($,$)"   -> "\F"
+"LT($,%)"   -> "IF{EQ(Nd($),Nd(%)),Lt1(ELZ($),ELZ(%)),Lt2(ELZ($),ELZ(%))}"
+
+
+; LE(a,b) returns a <= b
+"LE($,%)"  -> "OR(EQ($,%),LT($,%))"
+
+; GE(a,b) returns a >= b
+"GE($,%)"  -> "NOT(LT($,%))"
+
+; GT(a,b) returns a >= b
+"GT($,%)"  -> "AND(NE($,%),NOT(LT($,%)))"
+
+ 
+
+; EVEN(a) returns \T if a is even, \F otherwise
+"EVEN($.)"  -> "EvenD(.)"
+"EvenD(\0)" -> "\T"
+"EvenD(\2)" -> "\T"
+"EvenD(\4)" -> "\T"
+"EvenD(\6)" -> "\T"
+"EvenD(\8)" -> "\T"
+"EvenD($)"  -> "\F"
+
+; ODD(a) returns \T if a is odd, \F otherwise
+"ODD($)"    -> "NOT(EVEN($))"
+
+
+
+;;; ***************************
+;;; New for sum_of_even_fib.mkv
+;;; ***************************
+
+
+; EVENS(<intlist>) returns even integers from list intlist,
+; whose elements are separated by a single blank
+"EVENS($)"        -> "TRIM(Evens1($,))"
+"Evens1(,%)"      -> "%"
+"Evens1($,%)"     -> "Evens1(REST($),%\ FirstIfFirstEven($))"
+
+"FirstIfFirstEven()"      -> ""
+"FirstIfFirstEven(.$\ %)" -> "IF{EVEN(.$),.$,}"
+"FirstIfFirstEven(.$)"    -> "IF{EVEN(.$),.$,}"
+
+
+; SUM<intlist,0> returns the sum of the integers in intlist,
+; which are separated by blanks.
+"SUM<,$>"     -> "$"
+"SUM<\ $,%>"  -> "SUM<$,%>"
+"SUM<$\ %,*>" -> "SUM<%,+($,*)>"
+"SUM<$,%>"    -> "+($,%)"
+
+; FIBLT - compute fibonacci numbers until maxvalue < next
+; FIBLT(maxvalue,next,prev)intlist...
+"FIBLT($,%,*)*"     -> "Fiblt1(LE($,%),$,%,*)*"
+"Fiblt1(\F,*,$,%)*" -> "FIBLT(*,+($,%),$)%\ *"
+"Fiblt1(\T,*,$,%)*" -> "Fiblt2[*,TRIM(%\ *)]"
+"Fiblt2[$,%]"       -> "%" 
+
+; This is the main program.
+; It is controlled by a state "s*:" prefix because it
+; was too difficult to read the markov.log logfile when
+; the FIBLT call is surrounded by functions.
+"s1:$" -> "s2:FIBLT($,\1,\1)"
+"s2:$" -> "s3:EVENS($)"
+"s3:$" -> "SUM<$,\0>"
+
