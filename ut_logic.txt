@@ -1,0 +1,192 @@
+; Unit Test File for logic.mkv
+; Assumes that the first two lines of logic.mkv are
+;   "*" -> "x[*]"
+;   "x[$]" -> "$"
+; so the tests can pass in tagged function names to be executed.
+; The end step will match when all functions have been evaluated.
+;
+; Test #1a - NOT
+\N\O\T\(F\)
+T
+; Test #1b
+\N\O\T\(hello\)
+F
+;
+; Test #2a - OR
+\O\R\(F\,F\)
+F
+; Test #2b
+\O\R\(hello\,F\)
+T
+; Test #2c
+\O\R\(F\,hello\)
+T
+; Test #2d
+\O\R\(hello\,there\)
+T
+;
+; Test #3a - AND
+\A\N\D\(F\,F\)
+F
+; Test #3b
+\A\N\D\(hello\,F\)
+F
+; Test #3c
+\A\N\D\(F\,hello\)
+F
+; Test #3d
+\A\N\D\(hello\,there\)
+T
+;
+; Test #4a - IF
+\I\F\{\O\R\(F\,T\)\,hello\,there\}
+hello
+; Test #4b
+\I\F\{\O\R\(F\,F\)\,hello\,there\}
+there
+;
+; Test #5a - ELZ
+\E\L\Z\(0\)
+0
+; Test #5b
+\E\L\Z\(10\)
+10
+; Test #5c
+\E\L\Z\(010\)
+10
+; Test #5d
+\E\L\Z\(0010\)
+10
+;
+; Test #6a - EQ
+\E\Q\(\,\)
+T
+; Test #6b
+\E\Q\(010\,10\)
+T
+; Test #6c
+\E\Q\(10\,11\)
+F
+;
+; Test #7a - NE
+\N\E\(\,\)
+F
+; Test #7b
+\N\E\(010\,10\)
+F
+; Test #7c
+\N\E\(10\,11\)
+T
+;
+; Test #8 - Nd
+\N\d\(0012345\)
+5
+;
+; Test #9a - LT
+\L\T\(123\,123\)
+F
+; Test #9b
+\L\T\(123\,124\)
+T
+; Test #9c
+\L\T\(124\,123\)
+F
+; Test #9c
+\L\T\(0123\,122\)
+F
+; Test #9c
+\L\T\(0123\,1231\)
+T
+; Test #9d
+\L\T\(1231\,0123\)
+F
+; Test #9e
+\L\T\(99\,13\)
+F
+;
+; Test #10a - LE
+\L\E\(1230\,1230\)
+T
+; Test #10b
+\L\E\(1230\,1231\)
+T
+; Test #10c
+\L\E\(1232\,1231\)
+F
+; Test #10d
+\L\E\(015\,127\)
+T
+; Test #10e
+\L\E\(123\,0012\)
+F
+; Test #10f
+\L\E\(99\,13\)
+F
+;
+; Test #11a - GE
+\G\E\(1234\,1234\)
+T
+; Test #11b
+\G\E\(1234\,1235\)
+F
+; Test #11c
+\G\E\(1235\,1234\)
+T
+; Test #11d
+\G\E\(012\,123\)
+F
+; Test #11e
+\G\E\(123\,0012\)
+T
+; Test #11f
+\G\E\(99\,13\)
+T
+;
+; Test #12a - GT
+\G\T\(1234\,1234\)
+F
+; Test #12b
+\G\T\(1234\,1235\)
+F
+; Test #12c
+\G\T\(1235\,1234\)
+T
+; Test #11d
+\G\T\(012\,123\)
+F
+; Test #11e
+\G\T\(123\,0012\)
+T
+; Test #11f
+\G\T\(99\,13\)
+T
+;
+; Test #12a - EVEN
+\E\V\E\N\(123\)
+F
+; Test #12b
+\E\V\E\N\(120\)
+T
+; Test #12c
+\E\V\E\N\(2\)
+T
+; Test #12d
+\E\V\E\N\(124\)
+T
+; Test #12d
+\E\V\E\N\(126\)
+T
+; Test #12e
+\E\V\E\N\(128\)
+T
+; Test #12f
+\E\V\E\N\(129\)
+F
+;
+; Test #13a - ODD
+\O\D\D\(12345\)
+T
+; Test #13b
+\O\D\D\(12346\)
+F
+
