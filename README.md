@@ -1,7 +1,7 @@
 Markov
 ======
 
-Markov is a string rewriting language, written in C++ for the PltGames TuringTarpit.
+Markov is a string rewriting language, written in C++ for the Plt Games TuringTarpit.
 
 This program uses string transformations to convert an input string into an output string.  
 The input program is a series of transformations like:
@@ -82,7 +82,7 @@ The first transformation in the program file is the starting
 transformation, which is only used once, on the original input string.
 It must match, or the Markov program will report a failure.   The 
 second transformation in the program file is the ending transformation.
-At each step, if this match string matches the working string, the 
+At each step, if this pattern matches the working string, the 
 Markov program performs the replacement and reports the result as 
 the output string.
 
@@ -200,13 +200,12 @@ DEBUGGING:
 
 In Debug Mode, a file "markov.log" will be created in the current 
 working directory, which will contain the working string and the 
-tranformation used (plus the number of times the transformation 
-was used) for each transformation performed.  In Unit Test mode, 
+tranformation used for each transformation performed.  In Unit Test mode, 
 the debug output file will be reset before each input line is 
 processed, so when the program exits the debug output file will 
 only contain the transformations for the last input line.
 If the program returns an error like ERROR_NO_MATCHING_XFORMS then
-run with the -debug option and look at the last transformation to 
+try running with the -debug option and look at the last transformation to 
 determine the working string which couldn't be matched.
 
 If both "-debug" and "-verbose" are specified, every attempted
@@ -232,9 +231,12 @@ version 4.7.2.
 BUILD INSTRUCTIONS (Linux using g++):
 
 In the directory with the source files and Makefile, type:
+
     make
+
 This creates file "markov".
 To delete all the object files and the "markov" file before building, type:
+
     make clean
 
 To build on Windows using Visual Studio C++, create a solution and
