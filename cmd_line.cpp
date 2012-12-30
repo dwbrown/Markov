@@ -241,20 +241,26 @@ bool CmdLine::WriteToDebug() const
 void CmdLine::DoPrintHelp( ostream & outfile ) const
 {
     outfile << "Syntax: " << ThisProgramName() << 
-               " <options> <program_file_name> <input_file_name>" << endl;
-    outfile << "        <output_file_name>" << endl << endl;
-    outfile << "filenames can be ommitted from the right if not needed." << 
+               " <options> <program_file> <input_file> <output_file>" <<
                endl << endl;
+    outfile << "output_file and input_file can be omitted from the right " <<
+               "if not needed." << endl << endl;
+    outfile << "options can appear anywhere on command line." << endl;
     outfile << 
         "options are 0 or more of: (can abbreviate to 1 char after the dash)"
         << endl;
-    outfile << "     -1           - single line mode" << endl;
-    outfile << "     -test        - unit test mode" << endl;
-    outfile << "     -debug       - debug mode" << endl;
-    outfile << "     -print       - print program (with line numbers)" << endl;
-    outfile << "     -options     - print parsed cmd line args" << endl << endl;
-    outfile << "     -help        - print help text" << endl;
-    outfile << "     '?'          - print help text" << endl;
+    outfile << "     -imm     - immediate mode: use " <<
+                                "input_file itself as input string" << endl;
+    outfile << "     -test    - unit test mode" << endl;
+    outfile << "     -debug   - write debug log to " << ThisProgramName() <<
+                                ".log" << endl;
+    outfile << "     -verbose - write even more log info" << endl;
+    outfile << "     -console - copy debug log to console" << endl;
+    outfile << "     -print   - print program (with line numbers) and exit" << 
+                                  endl;
+    outfile << "     -options - print parsed cmd line args and exit" << endl;
+    outfile << "     -help    - print help text and exit" << endl;
+    outfile << "     ?        - print help text and exit" << endl;
 }
 
 
