@@ -14,8 +14,8 @@ OBJECTS = markov.o cmd_line.o driver.o instr.o misc.o tagged_char.o \
 TARGET  = markov
 CC      = g++
 DEBUG   = -g
-CCFLAGS = -Wall -c $(DEBUG)
-LFLAGS  = -Wall $(DEBUG)
+CCFLAGS = -Wall -c
+LFLAGS  = -Wall
 
 markov : $(OBJECTS)
 	$(CC) $(LFLAGS) $(OBJECTS) -o markov
