@@ -16,7 +16,7 @@ The input program is a series of transformations like:
     "a[*]"   -> "b[*]"    ; change to state b
     "b[?$]*" -> "b[$]?*"  ; state b: reverse characters until done
 
-For each transformation, The string before the -> is the pattern string, the string after 
+For each transformation, The string before the -> is the pattern string and the string after 
 the -> is the replacement string.  The pattern string and the replacement string may be
 enclosed in double quotes like "abc", single quotes like 'abc', or vertical bars like |abc|.
 The delimiter may not appear inside the string, and the pattern and replacement strings may 
@@ -34,16 +34,16 @@ code 32 (blank) and 126 "~", plus end-of-line.   Tabs are converted to
 spaces, and other ASCII characters are ignored.   The high bit of 
 each character is used as a tag bit:  all chararacters in the pattern 
 or replacement strings which are preceeded by a backslash "\" match
-untagged characters (which have the high bit clear) in the working string, and
+untagged characters in the working string (which have the high bit clear), and
 all other characters in the pattern and replacement string match tagged
-characters (which have the high bit set) in the working string. 
+characters in the working string (which have the high bit set). 
  
 An end-of-line in the input string is converted to a tagged "~" 
 character, and a tagged "~" character in the final output string is 
 converted back to an end of line. 
 
 
-PATTERN MATCHING:
+WILDCARDS:
 
 The following five characters are wildcards: "? . * $ %".   
 The "?" and "." wildcards match a single untagged character, and if 
