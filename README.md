@@ -1,7 +1,7 @@
 Markov
 ======
 
-Markov is a string rewriting language, written in C++ for the Plt Games TuringTarpit.
+Markov is a string rewriting language, written in C++ for the Dec 2012 Plt Games TuringTarpit.
 
 This program uses string transformations to convert an input string into an output string.  
 The input program is a series of transformations like:
@@ -17,12 +17,12 @@ The input program is a series of transformations like:
     "b[?$]*" -> "b[$]?*"  ; state b: reverse characters until done
 
 For each transformation, The string before the -> is the pattern string, the string after 
-the -> is the replacement string.  The pattern string and the replacement string may use as 
-delimiters single quotes like 'abc', double quotes like "abc", or vertical bars like |abc|.   
+the -> is the replacement string.  The pattern string and the replacement string may be
+enclosed in double quotes like "abc", single quotes like 'abc', or vertical bars like |abc|.
 The delimiter may not appear inside the string, and the pattern and replacement strings may 
 not contain end of lines (but may contain the "~" character, which matches an end-of-line in 
 the input file).  Comments start with a ";" character and extend to the end of the line.  
-Any number of spaces, end of lines or comments may appear before or after the match or 
+Any number of spaces, end of lines or comments may appear before or after the pattern or 
 replacement strings.
 
 At each transformation step, the result of the previous transformation 
@@ -31,16 +31,15 @@ string, to distinguish it from the original input string.
 
 The input string may consist only of printing characters between ASCII 
 code 32 (blank) and 126 "~", plus end-of-line.   Tabs are converted to 
-spaces.   Any other ASCII characters are ignored.   The eighth bit of 
-each character is used as a tag bit:  all chararacters in the match 
-or replacement strings which are preceeded by a backslash \ are literal 
-characters, which match untagged characters in the working string.  
-All other characters in the match and replacement string are tagged, 
-meaning they have the high byte set, and only match the corresponding 
-tagged characters in the working string.
+spaces, and other ASCII characters are ignored.   The high bit of 
+each character is used as a tag bit:  all chararacters in the pattern 
+or replacement strings which are preceeded by a backslash "\" match
+untagged characters (which have the high bit clear) in the working string, and
+all other characters in the pattern and replacement string match tagged
+characters (which have the high bit set) in the working string. 
  
 An end-of-line in the input string is converted to a tagged "~" 
-character.  A tagged "~" character in the final output string is 
+character, and a tagged "~" character in the final output string is 
 converted back to an end of line. 
 
 
@@ -90,19 +89,19 @@ The rest of the transformations are attempted in a top down manner.
 If a transformation fails, the next transformation below is attempted.
 If a transformation succeeds, then the program will start again at the top and 
 attempt the second (ending) transformation step, and so forth.  If no 
-transformation is matched, the MARKOV program will report a failure.
+transformation is matched, the Markov program will report a failure.
 
-Other than the wildcard characters, the tagged characters in the match 
+Other than the wildcard characters, the tagged characters in the pattern 
 and replacement strings act as scaffolding to mark various fields and 
 subfields in the working string.  Ideally, all the tagged characters 
 should be removed by the time the ending transformation is made.  
-If not, the tagged characters are written to the result string 
+If not, the tagged characters are written to the output string 
 preceeded by a backslash.
 
 
 MODES SPECIFIED ON THE COMMAND LINE:
 
-The Markov program may be run in one of three modes, depending on the 
+The Markov program may be run in one of three modes depending on the 
 command line arguments.  The full file mode, which is the default, 
 reads the entire input file into the input string (or from standard 
 input), converts all end-of-lines to tagged "~" characters,
@@ -135,14 +134,13 @@ tested directly from the unit test input file.
 COMMAND LINE SYNTAX:
 
     <command_line> ::=
-        "MARKOV" {<option>} <program_file_name>
-        <input> <opt_output_file_name>
+        markov {<option>} <program_file_name> <input> <opt_output_file_name>
 
     <option> ::=
         "-test" |               ; unit test mode
         "-debug" |              ; debug mode: write to file markov.log
-        "-verbose" |            ; verbose debug mode: write lots more
-        "-console" |            ; console debug mode: write to stdout 
+        "-verbose" |            ; verbose debugging: write lots more
+        "-console" |            ; console debugging: copy markov.log to stdout 
         "-print" |              ; print program and exit
         "-options" |            ; print options and exit
         "-help" |               ; print help text and exit
@@ -154,32 +152,28 @@ COMMAND LINE SYNTAX:
         <empty>                         ; read from standard input
 
     <opt_output_file_name> ::=
-        <output_file_name> |
+        <output_file_name> |            ; write to this output file
         <empty>                         ; write to standard output
 
 The options may be abreviated to a dash followed by a single letter.
-For example "-i" is the same as "-imm".
+For example "-i" is the same as "-imm".  Options may appear anywhere on the line.
 If the input filename is empty, the output filename must also be empty.
-
-The program result code will be 0 for OK or 100 for any error, plus 
-on error an error message will be written to standard error.
 
 
 EXAMPLES:
 
 The following examples are provided:
 
-        reverse.mkv     - reverses the input string
-        reverse_all.mkv - reverses each line of the input file
-        add.mkv         - add two arbitrary precision unsigned 
+    reverse.mkv         - reverses the input string
+    reverse_all.mkv     - reverses each line of the input file
+    add.mkv             - add two arbitrary precision unsigned 
                           integers, separated by a blank
-        fib.mkv	        - computes the first N fibonacci numbers, 
+    fib.mkv	            - computes the first N fibonacci numbers, 
                           where N is the input string
-        logic.mkv       - contains useful functions returning boolean
+    logic.mkv           - contains useful functions returning boolean
                           values F or T (plus anything not F is true).
-        sum_of_even_fib.mkv
-                        - computes the sum of the even fibonacci
-                          numbers less than N, where N is the input string.
+    sum_of_even_fib.mkv - computes the sum of the even fibonacci numbers
+                          less than N, where N is the input string.
 
 There are unit test input files for each of these, with file prefix 
 "ut_" and suffix ".txt" which can be run using the "-test" option.
