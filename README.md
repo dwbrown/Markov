@@ -204,21 +204,17 @@ tranformation used for each transformation performed.  In Unit Test mode,
 the debug output file will be reset before each input line is 
 processed, so when the program exits the debug output file will 
 only contain the transformations for the last input line.
-If the program returns an error like ERROR_NO_MATCHING_XFORMS then
-try running with the -debug option and look at the last transformation to 
-determine the working string which couldn't be matched.
 
-If both "-debug" and "-verbose" are specified, every attempted
-transformation will be included in file "markov.log" as well as 
-the transformations which succeeded.  If "-debug" and "-console"  
-are specified the debug information is also written to standard output, 
-which can make it easier to use a debugger to debug the code
-with a source level debugger.  Each output to the debug file will 
-include the program instruction number and source line number, 
-plus a unique id "uid" which is incremented each attempted
-transformation.  There is a constant BREAK_AT_UID
-in file "work.cpp" which, if nonzero, means to call a breakpoint 
-function after the specified attempted transformation.
+If the program returns an error like ERROR_NO_MATCHING_XFORMS then
+try running with the -debug option and look at the last transformation
+in "markov.log" to determine the working string which couldn't be matched.
+
+If both "-debug" and "-verbose" are specified, every step of every
+transformation will be included in file "markov.log".
+If "-debug" and "-console" are specified the debug information is also written 
+to standard output.  Both "-verbose" and "-console" greatly slow down
+program execution.
+
 
 
 DEVELOPMENT LANGUAGE:
