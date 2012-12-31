@@ -198,8 +198,8 @@ To return the sum of the even fibonacci numbers less than 4000000, type:
 
 DEBUGGING:
 
-In Debug Mode, a file "markov.log" will be created in the current 
-working directory, which will contain the working string and the 
+If the "-debug" option is specified, a file "markov.log" will be created in the
+current working directory, which will contain the working string and the 
 tranformation used for each transformation performed.  In Unit Test mode, 
 the debug output file will be reset before each input line is 
 processed, so when the program exits the debug output file will 
