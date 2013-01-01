@@ -16,18 +16,23 @@ The input program is a series of transformations like:
     "a[*]"   -> "b[*]"    ; change to state b
     "b[?$]*" -> "b[$]?*"  ; state b: reverse characters until done
 
+The first is the starting transformation.  It is used once, on the input string
+to produce the first working string, and must succeed or the Markov program will report an error.
+At each step, all transformations below the first are attempted in order until one succeeds, 
+and the result becomes the next working string, and the transformations are again attempted starting
+with the second transformation.  This is the ending transformation, and when it succeeds, 
+program execution will stop and the result is reported as the output string.  If no transformation
+succeeds, program execution will stop with an error.
+
 For each transformation, The string before the -> is the pattern string and the string after 
-the -> is the replacement string.  The pattern string and the replacement string may be
-enclosed in double quotes like "abc", single quotes like 'abc', or vertical bars like |abc|.
-The delimiter may not appear inside the string, and the pattern and replacement strings may 
-not contain end of lines (but may contain the "~" character, which matches an end-of-line in 
-the input file).  Comments start with a ";" character and extend to the end of the line.  
+the -> is the replacement string.  If a pattern string matches the working string, a new working string 
+is created from the replacement string and the wildcards matched by the pattern string.
+The pattern string and the replacement string may be enclosed in double quotes like "abc", 
+single quotes like 'abc', or vertical bars like |abc|.  The delimiter may not appear inside the 
+string, and the pattern and replacement strings may not contain end of lines 
+Comments start with a ";" character and extend to the end of the line.  
 Any number of spaces, end of lines or comments may appear before or after the pattern or 
 replacement strings.
-
-At each transformation step, the result of the previous transformation 
-(which is the input to the next transformation) is called the working 
-string, to distinguish it from the original input string.
 
 The input string may consist only of printing characters between ASCII 
 code 32 (blank) and 126 "~", plus end-of-line.   Tabs are converted to 
@@ -42,14 +47,11 @@ An end-of-line in the input string is converted to a tagged "~"
 character, and a tagged "~" character in the final output string is 
 converted back to an end of line. 
 
-
-WILDCARDS:
-
-The following five characters are wildcards: "? . * $ %".   
-The "?" and "." wildcards match a single untagged character, and if 
-they appear more than once in the pattern string each occurrence must 
-be identical.   The "*" wildcard matches zero or more consecutive 
-untagged or tagged characters.  If it occurs multiple times in the 
+The following five characters are wildcards: "? . * $ %", which come
+in three flavors.  The "?" and "." wildcards match a single untagged
+character, and if they appear more than once in the pattern string each 
+occurrence must be identical.   The "*" wildcard matches zero or more
+consecutive untagged or tagged characters.  If it occurs multiple times in the 
 pattern string the occurrences don't have to match.  The "$" and "%" 
 characters match zero or more consecutive untagged characters.  
 If they appear more than once in the match string, the matched 
@@ -73,23 +75,6 @@ by the last literal character in the pattern.
 For example, transformation "\c\d*\g\h" -> "\C\D*\G\H" with input 
 string "abcdefghij" will produce "abCDefGHij", as will transformation 
 "*\c\d*\g\h*" -> "*\C\D*\G\H*".
-
-
-ORDER OF TRANSFORMATIONS:
-
-The first transformation in the program file is the starting 
-transformation, which is only used once, on the original input string.
-It must match, or the Markov program will report a failure.   The 
-second transformation in the program file is the ending transformation.
-At each step, if this pattern matches the working string, the 
-Markov program performs the replacement and reports the result as 
-the output string.
-
-The rest of the transformations are attempted in a top down manner.
-If a transformation fails, the next transformation below is attempted.
-If a transformation succeeds, then the program will start again at the top and 
-attempt the second (ending) transformation step, and so forth.  If no 
-transformation is matched, the Markov program will report a failure.
 
 Other than the wildcard characters, the tagged characters in the pattern 
 and replacement strings act as scaffolding to mark various fields and 
@@ -167,7 +152,7 @@ The following examples are provided:
     reverse.mkv         - reverses the input string
     reverse_all.mkv     - reverses each line of the input file
     add.mkv             - add two arbitrary precision unsigned 
-                          integers, separated by a blank
+                          integers, separated by a comma
     fib.mkv	            - computes the first N fibonacci numbers, 
                           where N is the input string
     logic.mkv           - contains useful functions returning boolean
