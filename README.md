@@ -140,7 +140,7 @@ COMMAND LINE SYNTAX:
         <output_file_name> |            ; write to this output file
         <empty>                         ; write to standard output
 
-The options may be abreviated to a dash followed by a single letter.
+The options may be abbreviated to a dash followed by a single letter.
 For example "-i" is the same as "-imm".  Options may appear anywhere on the line.
 If the input filename is empty, the output filename must also be empty.
 
